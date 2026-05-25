@@ -1,0 +1,23 @@
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: autokonten_app
+    restart: unless-stopped
+    ports:
+      - "8040:8040"
+    env_file:
+      - .env
+    volumes:
+      - ./.env:/app/.env
+      - media_storage:/app/storage/app/public
+    networks:
+      - autokonten
+
+volumes:
+  media_storage:
+
+networks:
+  autokonten:
+    driver: bridge
