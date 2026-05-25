@@ -13,16 +13,21 @@ FROM composer:2 AS vendor
 WORKDIR /app
 
 COPY composer.* ./
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --no-scripts --optimize-autoloader
 
 FROM php:8.2-cli-alpine
 
 WORKDIR /app
 
+RUN docker-php-ext-install pdo_mysql
+
 COPY . .
+
 COPY --from=vendor /app/vendor ./vendor
 COPY --from=frontend /app/public/build ./public/build
 
-EXPOSE 8000
+RUN php artisan package:discover --ansi
+
+EXPOSE 8040
 
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8040"]
